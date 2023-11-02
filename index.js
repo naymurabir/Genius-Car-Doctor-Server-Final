@@ -64,7 +64,7 @@ async function run() {
         const bookingsCollection = client.db('geniusCarDoctorDB').collection('bookings')
 
         //JWT related APIs
-        app.post('/jwt', logger, verifyToken, async (req, res) => {
+        app.post('/jwt', logger, async (req, res) => {
             const user = req.body
             const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
 
