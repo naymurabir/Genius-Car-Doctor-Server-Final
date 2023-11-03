@@ -10,7 +10,8 @@ const port = process.env.PORT || 5000
 
 //Middleware 
 app.use(cors({
-    origin: ['http://localhost:5173'],
+    // origin: ['http://localhost:5173'],
+    origin: ['https://genius-car-doctor-react.web.app', 'https://genius-car-doctor-react.firebaseapp.com', 'http://localhost:5173'],
     credentials: true
 }))
 app.use(express.json())
@@ -70,16 +71,29 @@ async function run() {
 
             res.cookie('token', token, {
                 httpOnly: true,
-                secure: false,
-                // sameSite: 'none'
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+
             }).send({ success: true })
         })
 
         //Remove token after logout the user
+        // app.post('/logout', async (req, res) => {
+        //     const user = req.body
+        //     console.log("User: ", user);
+        //     res.clearCookie('token', { maxAge: 0 }).send({ success: true })
+        // })
         app.post('/logout', async (req, res) => {
-            const user = req.body
-            console.log("User: ", user);
-            res.clearCookie('token', { maxAge: 0 }).send({ success: true })
+            const user = req.body;
+            console.log('logging out', user);
+            res.clearCookie(
+                "token",
+                {
+                    maxAge: 0,
+                    secure: process.env.NODE_ENV === "production" ? true : false,
+                    sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+                }
+            ).send({ success: true })
         })
 
         // Remove token by JWT
