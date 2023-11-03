@@ -71,8 +71,8 @@ async function run() {
 
             res.cookie('token', token, {
                 httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+                secure: false,
+                // sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
 
             }).send({ success: true })
         })
@@ -90,8 +90,8 @@ async function run() {
                 "token",
                 {
                     maxAge: 0,
-                    secure: process.env.NODE_ENV === "production" ? true : false,
-                    sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+                    // secure: process.env.NODE_ENV === "production" ? true : false,
+                    // sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
                 }
             ).send({ success: true })
         })
