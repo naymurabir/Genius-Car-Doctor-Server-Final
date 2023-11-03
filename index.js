@@ -11,7 +11,7 @@ const port = process.env.PORT || 5000
 //Middleware 
 app.use(cors({
     // origin: ['http://localhost:5173'],
-    origin: ['https://genius-car-doctor-react.web.app', 'https://genius-car-doctor-react.firebaseapp.com', 'http://localhost:5173'],
+    origin: ['https://genius-car-doctor-react.web.app', 'https://genius-car-doctor-react.firebaseapp.com'],
     credentials: true
 }))
 app.use(express.json())
