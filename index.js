@@ -75,6 +75,20 @@ async function run() {
             }).send({ success: true })
         })
 
+        //Remove token after logout the user
+        app.post('/logout', async (req, res) => {
+            const user = req.body
+            console.log("User: ", user);
+            res.clearCookie('token', { maxAge: 0 }).send({ success: true })
+        })
+
+        // Remove token by JWT
+        app.post('/logout', (req, res) => {
+            const user = req.body
+            console.log("Logging out", user);
+            res.clearCookie('token', { maxAge: 0 }).send({ success: true })
+        })
+
         //Services related APIs
         //POST
         app.post('/services', async (req, res) => {
