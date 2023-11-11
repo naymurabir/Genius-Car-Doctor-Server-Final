@@ -10,8 +10,7 @@ const port = process.env.PORT || 5000
 
 //Middleware 
 app.use(cors({
-    // origin: ['http://localhost:5173'],
-    origin: ['https://genius-car-doctor-react.web.app', 'https://genius-car-doctor-react.firebaseapp.com'],
+    origin: ['http://localhost:5173', 'https://magnificent-frogs.surge.sh'],
     credentials: true
 }))
 app.use(express.json())
@@ -65,14 +64,14 @@ async function run() {
         const bookingsCollection = client.db('geniusCarDoctorDB').collection('bookings')
 
         //JWT related APIs
-        app.post('/jwt', logger, async (req, res) => {
+        app.post('/jwt', async (req, res) => {
             const user = req.body
             const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
 
             res.cookie('token', token, {
                 httpOnly: true,
-                secure: false,
-                // sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+                secure: true,
+                sameSite: 'none'
 
             }).send({ success: true })
         })
@@ -81,8 +80,14 @@ async function run() {
         app.post('/logout', async (req, res) => {
             const user = req.body
             console.log("User: ", user);
-            res.clearCookie('token', { maxAge: 0 }).send({ success: true })
+            res.clearCookie('token', {
+                maxAge: 0,
+                secure: process.env.NODE_ENV === 'production' ? true : false,
+                sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+            })
+                .send({ status: true })
         })
+
 
         //Services related APIs
         //POST
@@ -93,7 +98,7 @@ async function run() {
         })
 
         //GET
-        app.get('/services', logger, async (req, res) => {
+        app.get('/services', async (req, res) => {
             const cursor = servicesCollection.find()
             const result = await cursor.toArray()
             res.send(result)
@@ -119,10 +124,10 @@ async function run() {
         })
 
         // GET
-        app.get('/bookings', logger, verifyToken, async (req, res) => {
+        app.get('/bookings', verifyToken, async (req, res) => {
             console.log("My token:", req.cookies.token);
 
-            if (req.query?.email !== req.query?.email) {
+            if (req.query?.email !== req.body.email) {
                 return res.status(403).send({ message: 'Forbidden access' })
             }
 
@@ -169,7 +174,7 @@ run().catch(console.dir);
 
 
 app.get('/', (req, res) => {
-    res.send("The Genius car doctor server is running...")
+    res.send("The Genius car doctor server is running 5...")
 })
 
 app.listen(port, () => {
