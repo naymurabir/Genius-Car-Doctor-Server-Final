@@ -83,7 +83,7 @@ async function run() {
             res.clearCookie('token', {
                 maxAge: 0,
                 secure: process.env.NODE_ENV === 'production' ? true : false,
-                sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+                sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict'
             })
                 .send({ status: true })
         })
@@ -99,7 +99,18 @@ async function run() {
 
         //GET
         app.get('/services', async (req, res) => {
-            const cursor = servicesCollection.find()
+            const filter = req.query
+            console.log(filter);
+            const query = {
+                // price: { $lt: 150 }
+                title: { $regex: filter.search, $options: 'i' }
+            }
+            const options = {
+                sort: {
+                    price: filter.sort === 'asc' ? 1 : -1
+                },
+            };
+            const cursor = servicesCollection.find(query, options)
             const result = await cursor.toArray()
             res.send(result)
         })
